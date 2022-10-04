@@ -14,18 +14,15 @@ For <b>specified az</b> deployments, we may use the count argument ("AZ_COUNT" v
 
 * Please, find further information and a visual example below:
 ```hcl
-# If there are associations already made between arguments passed on : 
-
-# PRIVATE_SUBNET_ID_LIST and PRIVATE_ROUTE_TABLE_ID_LIST 
-# or
-# PUBLIC_SUBNET_ID_LIST and PUBLIC_ROUTE_TABLE_ID
+# In order to properly deploy your module, keep in mind that if there are associations already made between arguments passed on: 
+# (PRIVATE_SUBNET_ID_LIST and PRIVATE_ROUTE_TABLE_ID_LIST) or (PUBLIC_SUBNET_ID_LIST and PUBLIC_ROUTE_TABLE_ID)
 # The deployment will not perform as expected, there may be failures on the deployment/configuration
-
-# This module always creates at least a security group unless you specify CREATE_SECURITY_GROUP as false
-
+#
+# This module always creates AT LEAST a security group unless you specify CREATE_SECURITY_GROUP as false
+#
 # Use AZ_COUNT only if you want to create the whole infrastructure besides VPC and Internet Gateway
-
-# The visual example:
+#
+# Full example below (Check our other examples in 'examples' folder):
 
 module "basenetworkingresources" {
   source = "../.."
