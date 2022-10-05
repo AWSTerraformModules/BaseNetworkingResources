@@ -3,9 +3,15 @@
 * This module dynamically creates AWS basic networking resources for general use across several architectural patterns
 * It's very easy to attach and adapt existing resources instead of creating new ones, considering the variables/conditions applied as we will show below
 
+## Diagram
+
+![Amazon AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+
 ## Usage
 
-1. By <b>all-attributes</b>, we mean using the optional arguments for configuring your deployment at it's maximum. Check terraform's registry to confirm each possible combination ([vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc), [subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet), [nat_gatway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway), [route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table), [security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)):
+* You will notice the commented TAG input, for more information, please check our [tags module](https://registry.terraform.io/modules/7clouds-terraform-modules/tags/aws/latest?tab=readme)
+
+* By <b>all-attributes</b>, we mean using the optional arguments for configuring your deployment at it's maximum. Check terraform's registry to confirm each possible combination ([vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc), [subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet), [nat_gatway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway), [route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table), [security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)):
 
 ```hcl
 module "basenetworkingresources" {
@@ -31,7 +37,7 @@ module "basenetworkingresources" {
   SECURITY_GROUP_EGRESS_TO_PORT                                  = 65535
   SECURITY_GROUP_EGRESS_RULES_PROTOCOL                           = "tcp"
   SECURITY_GROUP_EGRESS_CIDR_BLOCK                               = "0.0.0.0/0"
-  # TAGS                                                           = module.tags.TAGS #check our [tags module](terraform-registry-url)
+  # TAGS                                                           = module.tags.TAGS
   VPC_INSTANCE_TENENCY                                           = "default or dedicated"
   VPC_IPV4_IPAM_POOL_ID                                          = "your IPV4 IPAM POOL here"
   VPC_IPV4_NETMASK_LENGTH                                        = "your IPV4 netmask length here"

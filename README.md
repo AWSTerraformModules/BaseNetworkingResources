@@ -5,6 +5,10 @@ This module is a part of our product SCA — An automated API and Serverless Inf
 
 Please rank this repo 5 starts if you like our job!
 
+## Diagram
+
+![AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+
 ## Usage
 For <b>specified az</b> deployments, we may use the count argument ("AZ_COUNT" variable) and combine it with many different configurations:
 

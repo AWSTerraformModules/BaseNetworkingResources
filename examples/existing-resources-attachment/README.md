@@ -3,6 +3,10 @@
 * This module dynamically creates AWS basic networking resources for general use across several architectural patterns
 * It's very easy to attach and adapt existing resources instead of creating new ones, considering the variables/conditions applied as we will show below
 
+## Diagram
+
+![AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+
 ## Usage
 
 1. For <b>existing resources attachment</b> use their ID's to fill the resource variables with "_ID" on it. In this case, filling the subnets ID's variables ("PUBLIC_SUBNET_ID_LIST" and PRIVATE_SUBNET_ID_LIST) affects directly the resources which their "COUNT" related to them:
