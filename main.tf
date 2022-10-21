@@ -1,11 +1,5 @@
-# ###########################################################################################
-# #                                       DATA                                              #
-# ###########################################################################################
 data "aws_availability_zones" "available_az" {}
 
-# ###########################################################################################
-# #                             BASE NETWORKING RESOURCES                                   #
-# ###########################################################################################
 resource "aws_vpc" "vpc" {
   count                                = var.VPC_ID != "" ? 0 : 1
   cidr_block                           = var.VPC_CIDR
@@ -20,6 +14,78 @@ resource "aws_vpc" "vpc" {
   ipv6_netmask_length                  = var.VPC_IPV6_NETMASK_LENGTH
   ipv6_cidr_block_network_border_group = var.VPC_IPV6_CIDR_BLOCK_NETWORK_BORDER_GROUP
   assign_generated_ipv6_cidr_block     = var.VPC_ASSIGN_GENERATED_IPV6_CIDR_BLOCK
+}
+
+resource "aws_network_acl" "public_subnet_acl_list" {
+  count  = var.CREATE_CUSTOM_PUBLIC_SUBNET_ACL == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
+  vpc_id = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
+  tags   = var.TAGS != null ? "${merge(var.TAGS, { Name = "${var.PROJECT_NAME} Public Subnet Network ACL" })}" : { Name = "${var.PROJECT_NAME} Public Subnet Network ACL" }
+}
+
+resource "aws_network_acl" "private_subnet_acl_list" {
+  count  = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
+  vpc_id = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
+  tags   = var.TAGS != null ? "${merge(var.TAGS, { Name = "${var.PROJECT_NAME} Private Subnet Network ACL" })}" : { Name = "${var.PROJECT_NAME} Private Subnet Network ACL" }
+}
+
+resource "aws_network_acl_association" "public_subnet_acl_list_association" {
+  count          = var.CREATE_CUSTOM_PUBLIC_SUBNET_ACL == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
+  network_acl_id = aws_network_acl.public_subnet_acl_list[count.index].id
+  subnet_id      = aws_subnet.public_subnets[count.index].id
+}
+
+resource "aws_network_acl_association" "private_subnet_acl_list_association" {
+  count          = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
+  network_acl_id = aws_network_acl.private_subnet_acl_list[count.index].id
+  subnet_id      = aws_subnet.private_subnets[count.index].id
+}
+
+resource "aws_network_acl_rule" "public_subnet_acl_list_rule_ingress" {
+  count          = var.CREATE_CUSTOM_PUBLIC_SUBNET_ACL == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
+  network_acl_id = aws_network_acl.public_subnet_acl_list[count.index].id
+  rule_number    = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].rule_number
+  egress         = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].egress
+  protocol       = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].protocol
+  rule_action    = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].rule_action
+  cidr_block     = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].cidr_block
+  from_port      = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].from_port
+  to_port        = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST[count.index].to_port
+}
+
+resource "aws_network_acl_rule" "public_subnet_acl_list_rule_egress" {
+  count          = var.CREATE_CUSTOM_PUBLIC_SUBNET_ACL == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
+  network_acl_id = aws_network_acl.public_subnet_acl_list[count.index].id
+  rule_number    = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].rule_number
+  egress         = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].egress
+  protocol       = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].protocol
+  rule_action    = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].rule_action
+  cidr_block     = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].cidr_block
+  from_port      = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].from_port
+  to_port        = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST[count.index].to_port
+}
+
+resource "aws_network_acl_rule" "private_subnet_acl_list_rule_ingress" {
+  count          = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
+  network_acl_id = aws_network_acl.private_subnet_acl_list[count.index].id
+  rule_number    = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].rule_number
+  egress         = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].egress
+  protocol       = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].protocol
+  rule_action    = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].rule_action
+  cidr_block     = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].cidr_block
+  from_port      = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].from_port
+  to_port        = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST[count.index].to_port
+}
+
+resource "aws_network_acl_rule" "private_subnet_acl_list_rule_egress" {
+  count          = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
+  network_acl_id = aws_network_acl.private_subnet_acl_list[count.index].id
+  rule_number    = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].rule_number
+  egress         = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].egress
+  protocol       = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].protocol
+  rule_action    = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].rule_action
+  cidr_block     = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].cidr_block
+  from_port      = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].from_port
+  to_port        = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST[count.index].to_port
 }
 
 resource "aws_internet_gateway" "internet_gateway" {

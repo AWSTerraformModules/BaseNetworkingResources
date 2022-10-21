@@ -39,6 +39,42 @@ variable "VPC_DNS_HOSTNAMES" {
   default     = true
 }
 
+variable "CREATE_CUSTOM_PUBLIC_SUBNET_ACL" {
+  type        = bool
+  description = "To define if a Custom Network ACL will be created for association with Public Subnet(s)"
+  default     = false
+}
+
+variable "CREATE_CUSTOM_PRIVATE_SUBNET_ACL" {
+  type        = bool
+  description = "To define if a Custom Network ACL will be created for association with Private Subnet(s)"
+  default     = false
+}
+
+variable "PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST" {
+  type        = list(any)
+  description = "Map with argument/values for Network ACL Rules Configuration"
+  default     = []
+}
+
+variable "PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST" {
+  type        = list(any)
+  description = "Map with argument/values for Network ACL Rules Configuration"
+  default     = []
+}
+
+variable "PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST" {
+  type        = list(any)
+  description = "Map with argument/values for Network ACL Rules Configuration"
+  default     = []
+}
+
+variable "PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST" {
+  type        = list(any)
+  description = "Map with argument/values for Network ACL Rules Configuration"
+  default     = []
+}
+
 variable "INTERNET_GATEWAY_ID" {
   type        = string
   description = "Explicit Internet Gateway ID to overrule creation of default Internet Gateway"

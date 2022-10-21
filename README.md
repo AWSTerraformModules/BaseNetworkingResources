@@ -1,4 +1,5 @@
 # Base Networking Resources Module by 7Clouds
+
 Thank you for riding with us! Feel free to download or reference this respository in your terraform projects and studies
 
 This module is a part of our product SCA — An automated API and Serverless Infrastructure generator that can reduce your API development time by 40-60% and automate your deployments up to 90%! Check it out at https://seventechnologies.cloud/
@@ -7,16 +8,20 @@ Please rank this repo 5 starts if you like our job!
 
 ## Diagram
 
-![AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+![AWS Resources Diagram for VPN, Subnets, Network Access Control Lists, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/197301881-87f1bc11-871e-4f51-860d-93f541cbb4de.png "Basic Networking Infrastructure")
 
 ## Usage
+
 For <b>specified az</b> deployments, we may use the count argument ("AZ_COUNT" variable) and combine it with many different configurations:
 
 * Check each condition applied on the resources, considering terraform's syntax for [Conditions Expressions](https://www.terraform.io/language/expressions/conditionals) and [Arithmetic and Logical Operators](https://www.terraform.i/language/expressions/operators) for more details
 
+* The new features for version 0.1.1 are Network ACL Blocks, for custom NACL creation based on each subnet, association and dynamic rules
+
 * You will be able to compose the infrastructure according to your needs
 
 * Please, find further information and a visual example below:
+
 ```hcl
 # In order to properly deploy your module, keep in mind that if there are associations already made between arguments passed on: 
 # (PRIVATE_SUBNET_ID_LIST and PRIVATE_ROUTE_TABLE_ID_LIST) or (PUBLIC_SUBNET_ID_LIST and PUBLIC_ROUTE_TABLE_ID)
@@ -30,7 +35,7 @@ For <b>specified az</b> deployments, we may use the count argument ("AZ_COUNT" v
 
 module "basenetworkingresources" {
   source = "../.."
-  # Essential Variables
+  # Essential Variable
   PROJECT_NAME = "NewModules" # Avoid using spaces or special characters
 
   # Structural Variables
@@ -39,6 +44,12 @@ module "basenetworkingresources" {
   VPC_CIDR                                     = "10.192.0.0/16"
   VPC_DNS_SUPPORT                              = true
   VPC_DNS_HOSTNAMES                            = true
+  CREATE_CUSTOM_PUBLIC_SUBNET_ACL              = true
+  CREATE_CUSTOM_PRIVATE_SUBNET_ACL             = true
+  PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST          = [] # Place your ingress rules map(s) for public subnets here
+  PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST           = [] # Place your egress rules map(s) for public subnets here
+  PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST         = [] # Place your ingress rules map(s) for private subnets here
+  PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST          = [] # Place your egress rules map(s) for private subnets here
   INTERNET_GATEWAY_ID                          = "igw-034559b377ce9eff4"
   PUBLIC_SUBNET_ID_LIST                        = ["subnet-0509bda19a415980b", "subnet-0513ac6e1496448ab"] # If count PUBLIC_SUBNET_ID_LIST != ELASTIC_IP_ALLOCATION_ID_LIST there may be failures on the deployment/configuration
   PUBLIC_SUBNETS_CIDR_BLOCK_LIST               = ["10.192.11.0/24", "10.192.12.0/24"]
@@ -118,7 +129,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_basenetworkingresources"></a> [basenetworkingresources](#module\_basenetworkingresources) | ./modules | n/a |
+| <a name="module_basenetworkingresources"></a> [basenetworkingresources](#module\_basenetworkingresources) | ./modules | v0.1.1 |
 
 ## Resources
 
@@ -127,6 +138,14 @@ No requirements.
 | [aws_eip.elastic_ips](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
 | [aws_internet_gateway.internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 | [aws_nat_gateway.nat_gateways](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
+| [aws_network_acl.private_subnet_acl_list](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl) | resource |
+| [aws_network_acl.public_subnet_acl_list](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl) | resource |
+| [aws_network_acl_association.private_subnet_acl_list_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_association) | resource |
+| [aws_network_acl_association.public_subnet_acl_list_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_association) | resource |
+| [aws_network_acl_rule.private_subnet_acl_list_rule_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule) | resource |
+| [aws_network_acl_rule.private_subnet_acl_list_rule_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule) | resource |
+| [aws_network_acl_rule.public_subnet_acl_list_rule_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule) | resource |
+| [aws_network_acl_rule.public_subnet_acl_list_rule_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule) | resource |
 | [aws_route_table.private_route_tables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
 | [aws_route_table.public_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
 | [aws_route_table_association.private_subnets_route_table_associations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
@@ -142,6 +161,8 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_AZ_COUNT"></a> [AZ\_COUNT](#input\_AZ\_COUNT) | Fixed number of AZs to create resources | `number` | `0` | no |
+| <a name="input_CREATE_CUSTOM_PRIVATE_SUBNET_ACL"></a> [CREATE\_CUSTOM\_PRIVATE\_SUBNET\_ACL](#input\_CREATE\_CUSTOM\_PRIVATE\_SUBNET\_ACL) | To define if a Custom Network ACL will be created for association with Private Subnet(s) | `bool` | `false` | no |
+| <a name="input_CREATE_CUSTOM_PUBLIC_SUBNET_ACL"></a> [CREATE\_CUSTOM\_PUBLIC\_SUBNET\_ACL](#input\_CREATE\_CUSTOM\_PUBLIC\_SUBNET\_ACL) | To define if a Custom Network ACL will be created for association with Public Subnet(s) | `bool` | `false` | no |
 | <a name="input_CREATE_SECURITY_GROUP"></a> [CREATE\_SECURITY\_GROUP](#input\_CREATE\_SECURITY\_GROUP) | To overwrite creation of Security Group | `bool` | `true` | no |
 | <a name="input_ELASTIC_IPS_ADDRESS"></a> [ELASTIC\_IPS\_ADDRESS](#input\_ELASTIC\_IPS\_ADDRESS) | IP address from an EC2 BYOIP pool. This option is only available for VPC EIPs | `any` | `null` | no |
 | <a name="input_ELASTIC_IPS_ASSOCIATE_WITH_PRIVATE_IP"></a> [ELASTIC\_IPS\_ASSOCIATE\_WITH\_PRIVATE\_IP](#input\_ELASTIC\_IPS\_ASSOCIATE\_WITH\_PRIVATE\_IP) | User-specified primary or secondary private IP address to associate with the Elastic IP address. If no private IP address is specified, the Elastic IP address is associated with the primary private IP address | `any` | `null` | no |
@@ -171,6 +192,8 @@ No requirements.
 | <a name="input_PRIVATE_SUBNETS_MAP_CUSTOMER_OWNED_IP_ON_LAUNCH"></a> [PRIVATE\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH](#input\_PRIVATE\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH) | Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address. The customer\_owned\_ipv4\_pool and outpost\_arn arguments must be specified when set to true. Default is false | `any` | `null` | no |
 | <a name="input_PRIVATE_SUBNETS_OUTPOST_ARN"></a> [PRIVATE\_SUBNETS\_OUTPOST\_ARN](#input\_PRIVATE\_SUBNETS\_OUTPOST\_ARN) | The Amazon Resource Name (ARN) of the Outpost | `any` | `null` | no |
 | <a name="input_PRIVATE_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH"></a> [PRIVATE\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH](#input\_PRIVATE\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH) | The type of hostnames to assign to instances in the subnet at launch. For IPv6-only subnets, an instance DNS name must be based on the instance ID. For dual-stack and IPv4-only subnets, you can specify whether DNS names use the instance IPv4 address or the instance ID. Valid values: ip-name, resource-name | `any` | `null` | no |
+| <a name="input_PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST"></a> [PRIVATE\_SUBNET\_ACL\_RULE\_EGRESS\_LIST](#input\_PRIVATE\_SUBNET\_ACL\_RULE\_EGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration | `list(any)` | `[]` | no |
+| <a name="input_PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST"></a> [PRIVATE\_SUBNET\_ACL\_RULE\_INGRESS\_LIST](#input\_PRIVATE\_SUBNET\_ACL\_RULE\_INGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration | `list(any)` | `[]` | no |
 | <a name="input_PRIVATE_SUBNET_ID_LIST"></a> [PRIVATE\_SUBNET\_ID\_LIST](#input\_PRIVATE\_SUBNET\_ID\_LIST) | Explicit Private Subnet ID List to overrule creation of Private Subnets | `list(string)` | `[]` | no |
 | <a name="input_PROJECT_NAME"></a> [PROJECT\_NAME](#input\_PROJECT\_NAME) | The project name that will be prefixed to resource names | `string` | n/a | yes |
 | <a name="input_PUBLIC_ROUTE_TABLE_CIDR_BLOCK"></a> [PUBLIC\_ROUTE\_TABLE\_CIDR\_BLOCK](#input\_PUBLIC\_ROUTE\_TABLE\_CIDR\_BLOCK) | The CIDR block of the route | `string` | `"0.0.0.0/0"` | no |
@@ -189,6 +212,8 @@ No requirements.
 | <a name="input_PUBLIC_SUBNETS_MAP_CUSTOMER_OWNED_IP_ON_LAUNCH"></a> [PUBLIC\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH](#input\_PUBLIC\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH) | Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address. The customer\_owned\_ipv4\_pool and outpost\_arn arguments must be specified when set to true. Default is false | `any` | `null` | no |
 | <a name="input_PUBLIC_SUBNETS_OUTPOST_ARN"></a> [PUBLIC\_SUBNETS\_OUTPOST\_ARN](#input\_PUBLIC\_SUBNETS\_OUTPOST\_ARN) | The Amazon Resource Name (ARN) of the Outpost | `any` | `null` | no |
 | <a name="input_PUBLIC_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH"></a> [PUBLIC\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH](#input\_PUBLIC\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH) | The type of hostnames to assign to instances in the subnet at launch. For IPv6-only subnets, an instance DNS name must be based on the instance ID. For dual-stack and IPv4-only subnets, you can specify whether DNS names use the instance IPv4 address or the instance ID. Valid values: ip-name, resource-name | `any` | `null` | no |
+| <a name="input_PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST"></a> [PUBLIC\_SUBNET\_ACL\_RULE\_EGRESS\_LIST](#input\_PUBLIC\_SUBNET\_ACL\_RULE\_EGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration | `list(any)` | `[]` | no |
+| <a name="input_PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST"></a> [PUBLIC\_SUBNET\_ACL\_RULE\_INGRESS\_LIST](#input\_PUBLIC\_SUBNET\_ACL\_RULE\_INGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration | `list(any)` | `[]` | no |
 | <a name="input_PUBLIC_SUBNET_ID_LIST"></a> [PUBLIC\_SUBNET\_ID\_LIST](#input\_PUBLIC\_SUBNET\_ID\_LIST) | Explicit Public Subnet ID List to overrule creation of Public Subnets | `list(string)` | `[]` | no |
 | <a name="input_SECURITY_GROUP_EGRESS_CIDR_BLOCK"></a> [SECURITY\_GROUP\_EGRESS\_CIDR\_BLOCK](#input\_SECURITY\_GROUP\_EGRESS\_CIDR\_BLOCK) | CIDR Block for Security Group's egress rules. | `string` | `"0.0.0.0/0"` | no |
 | <a name="input_SECURITY_GROUP_EGRESS_FROM_PORT"></a> [SECURITY\_GROUP\_EGRESS\_FROM\_PORT](#input\_SECURITY\_GROUP\_EGRESS\_FROM\_PORT) | Starting of the port range for the Egress Security Group's rules | `number` | `0` | no |
@@ -220,6 +245,8 @@ No requirements.
 | Name | Description |
 |------|-------------|
 | <a name="output_AZ_COUNT"></a> [AZ\_COUNT](#output\_AZ\_COUNT) | Fixed number of AZs to create resources |
+| <a name="output_CREATE_CUSTOM_PRIVATE_SUBNET_ACL"></a> [CREATE\_CUSTOM\_PRIVATE\_SUBNET\_ACL](#output\_CREATE\_CUSTOM\_PRIVATE\_SUBNET\_ACL) | To define if a Custom Network ACL will be created for association with Private Subnet(s) |
+| <a name="output_CREATE_CUSTOM_PUBLIC_SUBNET_ACL"></a> [CREATE\_CUSTOM\_PUBLIC\_SUBNET\_ACL](#output\_CREATE\_CUSTOM\_PUBLIC\_SUBNET\_ACL) | To define if a Custom Network ACL will be created for association with Public Subnet(s) |
 | <a name="output_CREATE_SECURITY_GROUP"></a> [CREATE\_SECURITY\_GROUP](#output\_CREATE\_SECURITY\_GROUP) | To overwrite creation of Security Group |
 | <a name="output_ELASTIC_IP_ALLOCATION_ID_LIST"></a> [ELASTIC\_IP\_ALLOCATION\_ID\_LIST](#output\_ELASTIC\_IP\_ALLOCATION\_ID\_LIST) | Explicit Elastic IP ID List to overrule creation of Elastic IPs |
 | <a name="output_INTERNET_GATEWAY_ID"></a> [INTERNET\_GATEWAY\_ID](#output\_INTERNET\_GATEWAY\_ID) | Explicit Internet Gateway ID to overrule creation of default Internet Gateway |
@@ -241,6 +268,8 @@ No requirements.
 | <a name="output_PRIVATE_SUBNETS_MAP_CUSTOMER_OWNED_IP_ON_LAUNCH"></a> [PRIVATE\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH](#output\_PRIVATE\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH) | Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address. The customer\_owned\_ipv4\_pool and outpost\_arn arguments must be specified when set to true. Default is false |
 | <a name="output_PRIVATE_SUBNETS_OUTPOST_ARN"></a> [PRIVATE\_SUBNETS\_OUTPOST\_ARN](#output\_PRIVATE\_SUBNETS\_OUTPOST\_ARN) | The Amazon Resource Name (ARN) of the Outpost |
 | <a name="output_PRIVATE_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH"></a> [PRIVATE\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH](#output\_PRIVATE\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH) | The type of hostnames to assign to instances in the subnet at launch. For IPv6-only subnets, an instance DNS name must be based on the instance ID. For dual-stack and IPv4-only subnets, you can specify whether DNS names use the instance IPv4 address or the instance ID. Valid values: ip-name, resource-name |
+| <a name="output_PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST"></a> [PRIVATE\_SUBNET\_ACL\_RULE\_EGRESS\_LIST](#output\_PRIVATE\_SUBNET\_ACL\_RULE\_EGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration |
+| <a name="output_PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST"></a> [PRIVATE\_SUBNET\_ACL\_RULE\_INGRESS\_LIST](#output\_PRIVATE\_SUBNET\_ACL\_RULE\_INGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration |
 | <a name="output_PRIVATE_SUBNET_ID_LIST"></a> [PRIVATE\_SUBNET\_ID\_LIST](#output\_PRIVATE\_SUBNET\_ID\_LIST) | Explicit Private Subnet ID List to overrule creation of Private Subnets |
 | <a name="output_PROJECT_NAME"></a> [PROJECT\_NAME](#output\_PROJECT\_NAME) | The project name that will be prefixed to resource names |
 | <a name="output_PUBLIC_ROUTE_TABLE_CIDR_BLOCK"></a> [PUBLIC\_ROUTE\_TABLE\_CIDR\_BLOCK](#output\_PUBLIC\_ROUTE\_TABLE\_CIDR\_BLOCK) | The CIDR block of the route |
@@ -258,6 +287,8 @@ No requirements.
 | <a name="output_PUBLIC_SUBNETS_MAP_CUSTOMER_OWNED_IP_ON_LAUNCH"></a> [PUBLIC\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH](#output\_PUBLIC\_SUBNETS\_MAP\_CUSTOMER\_OWNED\_IP\_ON\_LAUNCH) | Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address. The customer\_owned\_ipv4\_pool and outpost\_arn arguments must be specified when set to true. Default is false |
 | <a name="output_PUBLIC_SUBNETS_OUTPOST_ARN"></a> [PUBLIC\_SUBNETS\_OUTPOST\_ARN](#output\_PUBLIC\_SUBNETS\_OUTPOST\_ARN) | The Amazon Resource Name (ARN) of the Outpost |
 | <a name="output_PUBLIC_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH"></a> [PUBLIC\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH](#output\_PUBLIC\_SUBNETS\_PRIVATE\_DNS\_HOSTNAME\_TYPE\_ON\_LAUNCH) | The type of hostnames to assign to instances in the subnet at launch. For IPv6-only subnets, an instance DNS name must be based on the instance ID. For dual-stack and IPv4-only subnets, you can specify whether DNS names use the instance IPv4 address or the instance ID. Valid values: ip-name, resource-name |
+| <a name="output_PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST"></a> [PUBLIC\_SUBNET\_ACL\_RULE\_EGRESS\_LIST](#output\_PUBLIC\_SUBNET\_ACL\_RULE\_EGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration |
+| <a name="output_PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST"></a> [PUBLIC\_SUBNET\_ACL\_RULE\_INGRESS\_LIST](#output\_PUBLIC\_SUBNET\_ACL\_RULE\_INGRESS\_LIST) | Map with argument/values for Network ACL Rules Configuration |
 | <a name="output_PUBLIC_SUBNET_ID_LIST"></a> [PUBLIC\_SUBNET\_ID\_LIST](#output\_PUBLIC\_SUBNET\_ID\_LIST) | Explicit Public Subnet ID List to overrule creation of Public Subnets |
 | <a name="output_SECURITY_GROUP_EGRESS_CIDR_BLOCK"></a> [SECURITY\_GROUP\_EGRESS\_CIDR\_BLOCK](#output\_SECURITY\_GROUP\_EGRESS\_CIDR\_BLOCK) | CIDR Block for Security Group's egress rules. |
 | <a name="output_SECURITY_GROUP_EGRESS_FROM_PORT"></a> [SECURITY\_GROUP\_EGRESS\_FROM\_PORT](#output\_SECURITY\_GROUP\_EGRESS\_FROM\_PORT) | Starting of the port range for the Egress Security Group's rules |

@@ -1,14 +1,14 @@
-# ###########################################################################################
-# #                                     ESSENTIAL                                           #
-# ###########################################################################################
+###########################################################################################
+#                                     ESSENTIAL                                           #
+###########################################################################################
 output "PROJECT_NAME" {
   value       = var.PROJECT_NAME
   description = "The project name that will be prefixed to resource names"
 }
 
-# ###########################################################################################
-# #                                     STRUCTURAL                                          #
-# ###########################################################################################
+###########################################################################################
+#                                     STRUCTURAL                                          #
+###########################################################################################
 output "AZ_COUNT" {
   value       = var.AZ_COUNT
   description = "Fixed number of AZs to create resources"
@@ -27,6 +27,36 @@ output "VPC_DNS_SUPPORT" {
 output "VPC_DNS_HOSTNAMES" {
   value       = var.VPC_DNS_HOSTNAMES
   description = "To enable or disable dns_hostnames on vpc"
+}
+
+output "CREATE_CUSTOM_PUBLIC_SUBNET_ACL" {
+  value = var.CREATE_CUSTOM_PUBLIC_SUBNET_ACL
+  description = "To define if a Custom Network ACL will be created for association with Public Subnet(s)"
+}
+
+output "CREATE_CUSTOM_PRIVATE_SUBNET_ACL" {
+  value = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL
+  description = "To define if a Custom Network ACL will be created for association with Private Subnet(s)"
+}
+
+output "PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST" {
+  value = var.PUBLIC_SUBNET_ACL_RULE_INGRESS_LIST
+  description = "Map with argument/values for Network ACL Rules Configuration"
+}
+
+output "PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST" {
+  value = var.PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST
+  description = "Map with argument/values for Network ACL Rules Configuration"
+}
+
+output "PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST" {
+  value = var.PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST
+  description = "Map with argument/values for Network ACL Rules Configuration"
+}
+
+output "PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST" {
+  value = var.PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST
+  description = "Map with argument/values for Network ACL Rules Configuration"
 }
 
 output "PUBLIC_ROUTE_TABLE_CIDR_BLOCK" {
