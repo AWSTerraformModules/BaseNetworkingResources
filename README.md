@@ -8,7 +8,7 @@ Please rank this repo 5 starts if you like our job!
 
 ## Diagram
 
-![AWS Resources Diagram for VPN, Subnets, Network Access Control Lists, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/197301881-87f1bc11-871e-4f51-860d-93f541cbb4de.png "Basic Networking Infrastructure")
+![AWS Resources Diagram for VPC, Subnets, Network Access Control Lists, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/197301881-87f1bc11-871e-4f51-860d-93f541cbb4de.png "Basic Networking Infrastructure")
 
 ## Usage
 
@@ -40,7 +40,7 @@ module "basenetworkingresources" {
 
   # Structural Variables
   AZ_COUNT                                     = 1 # Use this attribute only if you want to limit the amount of AZs and sub resources this module will create on its own. If you're providing your own public and private subnets, elastic IPs, nat gateways, route tables and security group DO NOT USE this attribute. If you want to attach existing resources, you must provide their ID's on the variables with "_ID" suffix.
-  VPC_ID                                       = "vpc-08c5dd41e8d7cb857"
+  VPC_ID                                       = "your VPC ID here"
   VPC_CIDR                                     = "10.192.0.0/16"
   VPC_DNS_SUPPORT                              = true
   VPC_DNS_HOSTNAMES                            = true
@@ -50,17 +50,17 @@ module "basenetworkingresources" {
   PUBLIC_SUBNET_ACL_RULE_EGRESS_LIST           = [] # Place your egress rules map(s) for public subnets here
   PRIVATE_SUBNET_ACL_RULE_INGRESS_LIST         = [] # Place your ingress rules map(s) for private subnets here
   PRIVATE_SUBNET_ACL_RULE_EGRESS_LIST          = [] # Place your egress rules map(s) for private subnets here
-  INTERNET_GATEWAY_ID                          = "igw-034559b377ce9eff4"
-  PUBLIC_SUBNET_ID_LIST                        = ["subnet-0509bda19a415980b", "subnet-0513ac6e1496448ab"] # If count PUBLIC_SUBNET_ID_LIST != ELASTIC_IP_ALLOCATION_ID_LIST there may be failures on the deployment/configuration
+  INTERNET_GATEWAY_ID                          = "your Internet Gateway ID here"
+  PUBLIC_SUBNET_ID_LIST                        = ["YourPublicSubnetsID(s)Here"] # If count PUBLIC_SUBNET_ID_LIST != ELASTIC_IP_ALLOCATION_ID_LIST there may be failures on the deployment/configuration
   PUBLIC_SUBNETS_CIDR_BLOCK_LIST               = ["10.192.11.0/24", "10.192.12.0/24"]
-  PRIVATE_SUBNET_ID_LIST                       = ["subnet-031c22c3c743d1196", "subnet-0290c08b019237dca"]
+  PRIVATE_SUBNET_ID_LIST                       = ["YourPrivateSubnetsID(s)Here"]
   PRIVATE_SUBNETS_CIDR_BLOCK_LIST              = ["10.192.21.0/24", "10.192.22.0/24"]
-  ELASTIC_IP_ALLOCATION_ID_LIST                = ["eipalloc-0b0db65959bc71a04", "eipalloc-079734529e7f86285"]
-  NAT_GATEWAY_ID_LIST                          = ["abc", "abc"]
+  ELASTIC_IP_ALLOCATION_ID_LIST                = ["YourEIPAllocationID(s)Here"]
+  NAT_GATEWAY_ID_LIST                          = ["YourNatGatewayID(s)Here"]
   NAT_GATEWAY_ELASTIC_IP_VPC_ATTACHED          = true
-  PUBLIC_ROUTE_TABLE_ID                        = "abc"
+  PUBLIC_ROUTE_TABLE_ID                        = "your Public Route Table ID here"
   PUBLIC_ROUTE_TABLE_CIDR_BLOCK                = "0.0.0.0/0"
-  PRIVATE_ROUTE_TABLE_ID_LIST                  = ["abc", "abc"]
+  PRIVATE_ROUTE_TABLE_ID_LIST                  = ["yourPrivateRouteTablesID(s)here"]
   PRIVATE_ROUTE_TABLES_CIDR_BLOCK              = "0.0.0.0/0"
   PUBLIC_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION  = true
   PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION = true

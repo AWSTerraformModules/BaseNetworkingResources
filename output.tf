@@ -317,32 +317,32 @@ output "INTERNET_GATEWAY_ID" {
 }
 
 output "PUBLIC_SUBNETS_CIDR_BLOCK_LIST" {
-  value       = var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST != "" ? var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST : aws_subnet.public_subnets[*].cidr_block
+  value       = length(var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST) > 0  ? var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST : aws_subnet.public_subnets[*].cidr_block
   description = "Explicit Public Subnet CIDR Block List to overrule creation pattern of Public Subnets"
 }
 
 output "PRIVATE_SUBNETS_CIDR_BLOCK_LIST" {
-  value       = var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST != "" ? var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST : aws_subnet.private_subnets[*].cidr_block
+  value       = length(var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST) > 0 ? var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST : aws_subnet.private_subnets[*].cidr_block
   description = "Explicit Private Subnet CIDR Block List to overrule creation pattern of Public Subnets"
 }
 
 output "PUBLIC_SUBNET_ID_LIST" {
-  value       = var.PUBLIC_SUBNET_ID_LIST != "" ? var.PUBLIC_SUBNET_ID_LIST : aws_subnet.public_subnets[*].id
+  value       = length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? var.PUBLIC_SUBNET_ID_LIST : aws_subnet.public_subnets[*].id
   description = "Explicit Public Subnet ID List to overrule creation of Public Subnets"
 }
 
 output "PRIVATE_SUBNET_ID_LIST" {
-  value       = var.PRIVATE_SUBNET_ID_LIST != "" ? var.PRIVATE_SUBNET_ID_LIST : aws_subnet.private_subnets[*].id
+  value       = length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? var.PRIVATE_SUBNET_ID_LIST : aws_subnet.private_subnets[*].id
   description = "Explicit Private Subnet ID List to overrule creation of Private Subnets"
 }
 
 output "ELASTIC_IP_ALLOCATION_ID_LIST" {
-  value       = var.ELASTIC_IP_ALLOCATION_ID_LIST != "" ? var.ELASTIC_IP_ALLOCATION_ID_LIST : aws_eip.elastic_ips[*].id
+  value       = length(var.ELASTIC_IP_ALLOCATION_ID_LIST) > 0 ? var.ELASTIC_IP_ALLOCATION_ID_LIST : aws_eip.elastic_ips[*].id
   description = "Explicit Elastic IP ID List to overrule creation of Elastic IPs"
 }
 
 output "NAT_GATEWAY_ID_LIST" {
-  value       = var.NAT_GATEWAY_ID_LIST != "" ? var.NAT_GATEWAY_ID_LIST : aws_nat_gateway.nat_gateways[*].id
+  value       = length(var.NAT_GATEWAY_ID_LIST) > 0 ? var.NAT_GATEWAY_ID_LIST : aws_nat_gateway.nat_gateways[*].id
   description = "Explicit NAT Gateway ID List to overrule creation of Nat Gateways"
 }
 
@@ -352,7 +352,7 @@ output "PUBLIC_ROUTE_TABLE_ID" {
 }
 
 output "PRIVATE_ROUTE_TABLE_ID_LIST" {
-  value       = var.PRIVATE_ROUTE_TABLE_ID_LIST != "" ? var.PRIVATE_ROUTE_TABLE_ID_LIST : aws_route_table.private_route_tables[*].id
+  value       = length(var.PRIVATE_ROUTE_TABLE_ID_LIST) > 0 ? var.PRIVATE_ROUTE_TABLE_ID_LIST : aws_route_table.private_route_tables[*].id
   description = "Explicit Private Route Table ID List to overrule creation of Private Route Tables"
 }
 

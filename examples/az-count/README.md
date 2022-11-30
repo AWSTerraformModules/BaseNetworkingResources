@@ -6,7 +6,7 @@
 
 ## Diagram
 
-![AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+![AWS Resources Diagram for VPC, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
 
 ## Usage
 
@@ -17,7 +17,7 @@ module "basenetworkingresources" {
   source       = "../.."
   PROJECT_NAME = "NewModules"
   AZ_COUNT     = 2
-  VPC_ID       = "vpc-08c5dd41e8d7cb857"
+  VPC_ID       = "your VPC ID here"
  }
 ```
 * Always pay attention to your availability zones count and how many of them are available on the region you are using for deployment, there must be the at least same amount of them for this region as declared in the "AZ_COUNT" value.

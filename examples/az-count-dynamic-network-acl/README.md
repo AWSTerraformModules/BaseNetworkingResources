@@ -8,7 +8,7 @@
 
 ## Diagram
 
-![AWS Resources Diagram for VPN, Subnets, Network Access Control Lists, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/197301881-87f1bc11-871e-4f51-860d-93f541cbb4de.png "Basic Networking Infrastructure")
+![AWS Resources Diagram for VPC, Subnets, Network Access Control Lists, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/197301881-87f1bc11-871e-4f51-860d-93f541cbb4de.png "Basic Networking Infrastructure")
 
 ## Usage
 

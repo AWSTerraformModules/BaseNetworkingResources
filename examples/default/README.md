@@ -6,7 +6,7 @@
 
 ## Diagram
 
-![AWS Resources Diagram for VPN, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
+![AWS Resources Diagram for VPC, Subnets, Internet Gateway and Availability Zones](https://user-images.githubusercontent.com/106110465/193930951-b6974bf3-1993-438b-82ae-87181b18e6ce.png "Basic Networking Infrastructure")
 
 ## Usage
 
@@ -24,6 +24,6 @@ module "basenetworkingresources" {
 
 ```hcl
 AZ_COUNT              = 3
-PUBLIC_SUBNET_ID_LIST = ["subnet-0509bda19a415980b", "subnet-0513ac6e1496448ab"]
+PUBLIC_SUBNET_ID_LIST = ["foo", "bar"]
 ```
 *There should be 3 values for the related lists as well. If not, once we get to the end of a list it will iterate from the start again and you will probably have an unexpected output (with items from that list on multiple resources) and/or apply issues
