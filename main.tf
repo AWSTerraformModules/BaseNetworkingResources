@@ -95,7 +95,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count                                          = var.AZ_COUNT == 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : 0
+  count                                          = var.AZ_COUNT == 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : var.AZ_COUNT != 0 && var.CREATE_PUBLIC_SUBNET == true ? var.AZ_COUNT : 0
   vpc_id                                         = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   cidr_block                                     = length(var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST) > 0 ? element(var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST, count.index) : "10.192.${10 + count.index}.0/24"
   availability_zone                              = data.aws_availability_zones.available_az.names[count.index]
@@ -115,7 +115,7 @@ resource "aws_subnet" "public_subnets" {
 }
 
 resource "aws_subnet" "private_subnets" {
-  count                                          = var.AZ_COUNT == 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : 0
+  count                                          = var.AZ_COUNT == 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : var.AZ_COUNT != 0 && var.CREATE_PRIVATE_SUBNET == true ? var.AZ_COUNT : 0
   vpc_id                                         = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   cidr_block                                     = length(var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST) > 0 ? element(var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST, count.index) : "10.192.${20 + count.index}.0/24"
   availability_zone                              = data.aws_availability_zones.available_az.names[count.index]
@@ -134,9 +134,16 @@ resource "aws_subnet" "private_subnets" {
   private_dns_hostname_type_on_launch            = var.PRIVATE_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH
 }
 
+resource "aws_route" "main_route_table_route" {
+  count  = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : 1
+  route_table_id         = var.VPC_MAIN_ROUTE_TABLE_ID != "" ? var.VPC_MAIN_ROUTE_TABLE_ID : aws_vpc.vpc.main_route_table_id
+  destination_cidr_block = var.MAIN_ROUTE_TABLE_CIDR_BLOCK
+  gateway_id             = var.INTERNET_GATEWAY_ID != "" ? var.INTERNET_GATEWAY_ID : aws_internet_gateway.internet_gateway.id
+}
+
 resource "aws_eip" "elastic_ips" {
   count                     = length(var.PUBLIC_SUBNET_ID_LIST) > 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(var.PUBLIC_SUBNET_ID_LIST) == 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(aws_subnet.public_subnets.*.id) : 0
-  vpc                       = var.NAT_GATEWAY_ELASTIC_IP_VPC_ATTACHED
+  domain                    = var.NAT_GATEWAY_ELASTIC_IP_DOMAIN
   tags                      = var.TAGS != null ? "${merge(var.TAGS, { Name = "${var.PROJECT_NAME} Elastic IP ${count.index + 1}" })}" : { Name = "${var.PROJECT_NAME} Elastic IP ${count.index + 1}" }
   address                   = var.ELASTIC_IPS_ADDRESS
   associate_with_private_ip = var.ELASTIC_IPS_ASSOCIATE_WITH_PRIVATE_IP
@@ -194,7 +201,7 @@ resource "aws_route_table_association" "private_subnets_route_table_associations
 }
 
 resource "aws_security_group" "security_group" {
-  count       = var.CREATE_SECURITY_GROUP ? 1 : 0
+  count       = var.SECURITY_GROUP_COUNT
   description = "Security group for ${var.PROJECT_NAME} application"
   vpc_id      = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   ingress {

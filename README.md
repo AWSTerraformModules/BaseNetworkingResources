@@ -1,10 +1,12 @@
-# Base Networking Resources Module by 7Clouds
+# Base Networking Resources Module by Seven Technologies
 
 Thank you for riding with us! Feel free to download or reference this respository in your terraform projects and studies
 
-This module is a part of our product SCA — An automated API and Serverless Infrastructure generator that can reduce your API development time by 40-60% and automate your deployments up to 90%! Check it out at https://seventechnologies.cloud/
+This module is a part of our product SCA — An automated API and Serverless Infrastructure generator that can reduce your API development time by 40-60% and automate your deployments up to 90%!
 
-Please rank this repo 5 starts if you like our job!
+Get in touch via admin@seventechnologies.cloud if you have any doubts or suggestions and check out our website for other solutions: https://seventechnologies.cloud/
+
+Don't forget to star rate our repo if you like our job!
 
 ## Diagram
 
@@ -15,8 +17,6 @@ Please rank this repo 5 starts if you like our job!
 For <b>specified az</b> deployments, we may use the count argument ("AZ_COUNT" variable) and combine it with many different configurations:
 
 * Check each condition applied on the resources, considering terraform's syntax for [Conditions Expressions](https://www.terraform.io/language/expressions/conditionals) and [Arithmetic and Logical Operators](https://www.terraform.i/language/expressions/operators) for more details
-
-* The new features for version 0.1.1 are Network ACL Blocks, for custom NACL creation based on each subnet, association and dynamic rules
 
 * You will be able to compose the infrastructure according to your needs
 
@@ -113,23 +113,35 @@ module "basenetworkingresources" {
   SECURITY_GROUP_REVOKE_RULES_ON_DELETE                          = null
 }
 ```
+aws_route
+## Version 0.1.3 Features
+- Added possibility of creating or not public and private subnets based on a boolean variable in conjunction with the `AZ_COUNT` variable
+- Added resource `aws_route` to make it possible creating a route for the main route table created with a VPC
+- Changed deprecated `vpc` property of `aws_eip` to `domain` property
 
-<!-- BEGIN_TF_DOCS -->
+## Version 0.1.2 Features
+- Bugfix on some outputs
+
+## Version 0.1.1 Features
+* Possibility to define Network ACL Blocks, for custom NACL creation based on each subnet, association and dynamic rules
+
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.68.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.68.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_basenetworkingresources"></a> [basenetworkingresources](#module\_basenetworkingresources) | ./modules | v0.1.1 |
+| <a name="module_basenetworkingresources"></a> [basenetworkingresources](#module\_basenetworkingresources) | ./modules | v0.1.3 |
 
 ## Resources
 

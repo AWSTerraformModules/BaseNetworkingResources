@@ -21,6 +21,12 @@ variable "VPC_ID" {
   default     = ""
 }
 
+variable "VPC_MAIN_ROUTE_TABLE_ID" {
+  type        = string
+  description = "Used to define a route on the main route table of the explicit VPC given"
+  default     = ""
+}
+
 variable "VPC_CIDR" {
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length"
   type        = string
@@ -87,6 +93,12 @@ variable "PUBLIC_SUBNET_ID_LIST" {
   default     = []
 }
 
+variable "CREATE_PUBLIC_SUBNET" {
+  type        = bool
+  description = "To define if a Public Subnet will be created in conjunction with the az_count"
+  default     = true
+}
+
 variable "PUBLIC_SUBNETS_CIDR_BLOCK_LIST" {
   type        = list(string)
   description = "Explicit Public Subnet CIDR Block List to overrule creation pattern of Public Subnets. If filled out, this attribute needs to have as many items as the amount of AZs in the selected region if var \"AZ_COUNT\" is not set, or with the same amount of var \"AZ_COUNT\" otherwise"
@@ -99,10 +111,22 @@ variable "PRIVATE_SUBNET_ID_LIST" {
   default     = []
 }
 
+variable "CREATE_PRIVATE_SUBNET" {
+  type        = bool
+  description = "To define if a Private Subnet will be created in conjunction with the az_count"
+  default     = true
+}
+
 variable "PRIVATE_SUBNETS_CIDR_BLOCK_LIST" {
   type        = list(string)
   description = "Explicit Private Subnet CIDR Block List to overrule creation pattern of Public Subnets. If filled out, this attribute needs to have as many items as the amount of AZs in the selected region if var \"AZ_COUNT\" is not set, or with the same amount of var \"AZ_COUNT\" otherwise"
   default     = []
+}
+
+variable "MAIN_ROUTE_TABLE_CIDR_BLOCK" {
+  description = "The CIDR block of the main route table automatically created with the VPC"
+  type        = string
+  default     = "0.0.0.0/0"
 }
 
 variable "ELASTIC_IP_ALLOCATION_ID_LIST" {
@@ -117,10 +141,10 @@ variable "NAT_GATEWAY_ID_LIST" {
   default     = []
 }
 
-variable "NAT_GATEWAY_ELASTIC_IP_VPC_ATTACHED" {
-  type        = bool
-  description = "To set as false for mapping public ip on launch"
-  default     = true
+variable "NAT_GATEWAY_ELASTIC_IP_DOMAIN" {
+  type        = string
+  description = "Indicates if this EIP is for use in VPC"
+  default     = "vpc"
 }
 
 variable "PUBLIC_ROUTE_TABLE_ID" {
@@ -159,10 +183,10 @@ variable "PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION" {
   default     = false
 }
 
-variable "CREATE_SECURITY_GROUP" {
-  type        = bool
-  description = "To overwrite creation of Security Group"
-  default     = true
+variable "SECURITY_GROUP_COUNT" {
+  type        = number
+  description = "Number of security groups to be created"
+  default     = 1
 }
 
 variable "SECURITY_GROUP_INGRESS_FROM_PORT" {
@@ -211,6 +235,18 @@ variable "SECURITY_GROUP_EGRESS_CIDR_BLOCK" {
   description = "CIDR Block for Security Group's egress rules."
   type        = string
   default     = "0.0.0.0/0"
+}
+
+variable "SECURITY_GROUP_INGRESS_BLOCK" {
+   description = "One or more ingress blocks for the security groups (multiples allowed)"
+   type = list(object({ 
+      ingress = list(object({
+                        SECURITY_GROUP_INGRESS_FROM_PORT  = string,
+                        SECURITY_GROUP_INGRESS_TO_PORT = string,
+                        SECURITY_GROUP_INGRESS_RULES_PROTOCOL = string,
+                        SECURITY_GROUP_INGRESS_CIDR_BLOCK = string
+                  }))
+  }))
 }
 
 variable "TAGS" {
