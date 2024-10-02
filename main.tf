@@ -201,7 +201,7 @@ resource "aws_route_table_association" "private_subnets_route_table_associations
 }
 
 resource "aws_security_group" "security_group" {
-  count       = var.SECURITY_GROUP_COUNT
+  count       = var.CREATE_SECURITY_GROUP ? 1 : 0
   description = "Security group for ${var.PROJECT_NAME} application"
   vpc_id      = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   ingress {

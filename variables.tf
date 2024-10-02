@@ -183,10 +183,10 @@ variable "PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION" {
   default     = false
 }
 
-variable "SECURITY_GROUP_COUNT" {
-  type        = number
-  description = "Number of security groups to be created"
-  default     = 1
+variable "CREATE_SECURITY_GROUP" {
+  type        = bool
+  description = "To overwrite creation of Security Group"
+  default     = true
 }
 
 variable "SECURITY_GROUP_INGRESS_FROM_PORT" {
@@ -235,18 +235,6 @@ variable "SECURITY_GROUP_EGRESS_CIDR_BLOCK" {
   description = "CIDR Block for Security Group's egress rules."
   type        = string
   default     = "0.0.0.0/0"
-}
-
-variable "SECURITY_GROUP_INGRESS_BLOCK" {
-   description = "One or more ingress blocks for the security groups (multiples allowed)"
-   type = list(object({ 
-      ingress = list(object({
-                        SECURITY_GROUP_INGRESS_FROM_PORT  = string,
-                        SECURITY_GROUP_INGRESS_TO_PORT = string,
-                        SECURITY_GROUP_INGRESS_RULES_PROTOCOL = string,
-                        SECURITY_GROUP_INGRESS_CIDR_BLOCK = string
-                  }))
-  }))
 }
 
 variable "TAGS" {
