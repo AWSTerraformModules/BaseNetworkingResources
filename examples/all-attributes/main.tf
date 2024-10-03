@@ -5,9 +5,10 @@ module "basenetworkingresources" {
   VPC_CIDR                                                       = "10.192.0.0/16"
   VPC_DNS_SUPPORT                                                = true
   VPC_DNS_HOSTNAMES                                              = true
+  CREATE_PUBLIC_SUBNET                                           = true
   PUBLIC_SUBNETS_CIDR_BLOCK_LIST                                 = ["10.192.11.0/24", "10.192.12.0/24"]
+  CREATE_PRIVATE_SUBNET                                          = true
   PRIVATE_SUBNETS_CIDR_BLOCK_LIST                                = ["10.192.21.0/24", "10.192.22.0/24"]
-  NAT_GATEWAY_ELASTIC_IP_VPC_ATTACHED                            = true
   PUBLIC_ROUTE_TABLE_CIDR_BLOCK                                  = "0.0.0.0/0"
   PRIVATE_ROUTE_TABLES_CIDR_BLOCK                                = "0.0.0.0/0"
   PUBLIC_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION                    = true
@@ -23,6 +24,8 @@ module "basenetworkingresources" {
   SECURITY_GROUP_EGRESS_CIDR_BLOCK                               = "0.0.0.0/0"
   TAGS                                                           = module.tags.TAGS #Check on README
   VPC_INSTANCE_TENENCY                                           = "default or dedicated"
+  VPC_MAIN_ROUTE_TABLE_ID                                        = "your VPC Main Route Table ID here"
+  MAIN_ROUTE_TABLE_CIDR_BLOCK                                    = "0.0.0.0/0"
   VPC_IPV4_IPAM_POOL_ID                                          = "your IPV4 IPAM POOL here"
   VPC_IPV4_NETMASK_LENGTH                                        = "your IPV4 netmask length here"
   VPC_IPV6_CIDR_BLOCK                                            = "your IPV6 CIDR block here"
@@ -53,6 +56,7 @@ module "basenetworkingresources" {
   PRIVATE_SUBNETS_OUTPOST_ARN                                    = "your outpost arn here"
   PRIVATE_SUBNETS_PRIVATE_DNS_HOSTNAME_TYPE_ON_LAUNCH            = "ip-name or resource-name"
   NAT_GATEWAYS_CONNECTIVITY_TYPE                                 = "private or public"
+  NAT_GATEWAY_ELASTIC_IP_DOMAIN                                  = "vpc"
   PUBLIC_ROUTE_TABLE_PROPAGATING_VGWS                            = ["enter your virtual gateways for propagation"]
   PRIVATE_ROUTE_TABLES_PROPAGATING_VGWS                          = ["enter your virtual gateways for propagation"]
   SECURITY_GROUP_NAME                                            = "your Security Group name here"
