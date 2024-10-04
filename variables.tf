@@ -173,14 +173,14 @@ variable "PRIVATE_ROUTE_TABLES_CIDR_BLOCK" {
 
 variable "PUBLIC_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION" {
   type        = bool
-  description = "To define that provided public subnet list already has association to provided Route Table"
-  default     = false
+  description = "To define if public subnets will have association to Route Table"
+  default     = true
 }
 
 variable "PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION" {
   type        = bool
-  description = "To define that provided private subnet list already has association to provided Route Table"
-  default     = false
+  description = "To define if private subnets will have association to Route Table"
+  default     = true
 }
 
 variable "CREATE_SECURITY_GROUP" {

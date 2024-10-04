@@ -142,7 +142,7 @@ resource "aws_route" "main_route_table_route" {
 }
 
 resource "aws_eip" "elastic_ips" {
-  count                     = length(var.PUBLIC_SUBNET_ID_LIST) > 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(var.PUBLIC_SUBNET_ID_LIST) == 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(aws_subnet.public_subnets.*.id) : 0
+  count                     = var.CREATE_PRIVATE_SUBNET == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(var.PUBLIC_SUBNET_ID_LIST) == 0 && length(var.ELASTIC_IP_ALLOCATION_ID_LIST) == 0 ? length(aws_subnet.public_subnets.*.id) : 0
   domain                    = var.NAT_GATEWAY_ELASTIC_IP_DOMAIN
   tags                      = var.TAGS != null ? "${merge(var.TAGS, { Name = "${var.PROJECT_NAME} Elastic IP ${count.index + 1}" })}" : { Name = "${var.PROJECT_NAME} Elastic IP ${count.index + 1}" }
   address                   = var.ELASTIC_IPS_ADDRESS
@@ -155,7 +155,7 @@ resource "aws_eip" "elastic_ips" {
 }
 
 resource "aws_nat_gateway" "nat_gateways" {
-  count             = length(var.PUBLIC_SUBNET_ID_LIST) > 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(var.PUBLIC_SUBNET_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(aws_subnet.public_subnets.*.id) : 0
+  count             = var.CREATE_PRIVATE_SUBNET == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(var.PUBLIC_SUBNET_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(aws_subnet.public_subnets.*.id) : 0
   allocation_id     = length(var.ELASTIC_IP_ALLOCATION_ID_LIST) > 0 ? element(var.ELASTIC_IP_ALLOCATION_ID_LIST, count.index) : aws_eip.elastic_ips[count.index].id
   subnet_id         = length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? element(var.PUBLIC_SUBNET_ID_LIST, count.index) : aws_subnet.public_subnets[count.index].id
   tags              = var.TAGS != null ? "${merge(var.TAGS, { Name = "${var.PROJECT_NAME} Nat Gateway ${count.index + 1}" })}" : { Name = "${var.PROJECT_NAME} Nat Gateway ${count.index + 1}" }
@@ -164,7 +164,7 @@ resource "aws_nat_gateway" "nat_gateways" {
 }
 
 resource "aws_route_table" "public_route_table" {
-  count  = var.PUBLIC_ROUTE_TABLE_ID != "" ? 0 : 1
+  count  = var.CREATE_MAIN_TABLE_ROUTE == true ? 0 : var.PUBLIC_ROUTE_TABLE_ID != "" ? 0 : 1
   vpc_id = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   route {
     cidr_block = var.PUBLIC_ROUTE_TABLE_CIDR_BLOCK
@@ -176,7 +176,7 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_tables" {
-  count  = length(var.PRIVATE_ROUTE_TABLE_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(aws_nat_gateway.nat_gateways[*].id) : length(var.PRIVATE_ROUTE_TABLE_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) > 0 ? length(var.NAT_GATEWAY_ID_LIST) : 0
+  count  = var.CREATE_PRIVATE_SUBNET == false ? 0 : length(var.PRIVATE_ROUTE_TABLE_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) == 0 ? length(aws_nat_gateway.nat_gateways[*].id) : length(var.PRIVATE_ROUTE_TABLE_ID_LIST) == 0 && length(var.NAT_GATEWAY_ID_LIST) > 0 ? length(var.NAT_GATEWAY_ID_LIST) : 0
   vpc_id = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   route {
     cidr_block     = var.PRIVATE_ROUTE_TABLES_CIDR_BLOCK
@@ -187,14 +187,14 @@ resource "aws_route_table" "private_route_tables" {
 }
 
 resource "aws_route_table_association" "public_subnets_route_table_associations" {
-  count          = var.PUBLIC_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
+  count          = var.PUBLIC_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION == false ? 0 : length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? length(var.PUBLIC_SUBNET_ID_LIST) : length(aws_subnet.public_subnets[*].id)
   subnet_id      = length(var.PUBLIC_SUBNET_ID_LIST) > 0 ? element(var.PUBLIC_SUBNET_ID_LIST, count.index) : aws_subnet.public_subnets[count.index].id
   route_table_id = var.PUBLIC_ROUTE_TABLE_ID != "" ? var.PUBLIC_ROUTE_TABLE_ID : join("", aws_route_table.public_route_table.*.id)
   depends_on     = [aws_route_table.public_route_table]
 }
 
 resource "aws_route_table_association" "private_subnets_route_table_associations" {
-  count          = var.PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
+  count          = var.PRIVATE_SUBNETS_HAVE_ROUTE_TABLE_ASSOCIATION == false ? 0 : length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? length(var.PRIVATE_SUBNET_ID_LIST) : length(aws_subnet.private_subnets[*].id)
   subnet_id      = length(var.PRIVATE_SUBNET_ID_LIST) > 0 ? element(var.PRIVATE_SUBNET_ID_LIST, count.index) : aws_subnet.private_subnets[count.index].id
   route_table_id = length(var.PRIVATE_ROUTE_TABLE_ID_LIST) > 0 ? element(var.PRIVATE_ROUTE_TABLE_ID_LIST, count.index) : aws_route_table.private_route_tables[count.index].id
   depends_on     = [aws_route_table.private_route_tables]

@@ -113,9 +113,9 @@ module "basenetworkingresources" {
   SECURITY_GROUP_REVOKE_RULES_ON_DELETE                          = null
 }
 ```
-aws_route
+
 ## Version 0.1.3 Features
-- Added possibility of creating or not private subnets based on a boolean variable
+- Added possibility of creating or not private subnets, route tables and their associations, nat gateways and elastic ips based on a boolean variable
 - Added resource `aws_route` to make it possible creating a route for the main route table created with a VPC
 - Changed deprecated `vpc` property of `aws_eip` to `domain` property
 
