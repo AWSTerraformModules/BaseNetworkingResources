@@ -123,6 +123,12 @@ variable "PRIVATE_SUBNETS_CIDR_BLOCK_LIST" {
   default     = []
 }
 
+variable "CREATE_MAIN_TABLE_ROUTE" {
+  type        = bool
+  description = "To define if the main table route will be created for the VPC main table"
+  default     = false
+}
+
 variable "MAIN_ROUTE_TABLE_CIDR_BLOCK" {
   description = "The CIDR block of the main route table automatically created with the VPC"
   type        = string

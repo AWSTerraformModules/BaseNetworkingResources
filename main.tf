@@ -135,7 +135,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 resource "aws_route" "main_route_table_route" {
-  count  = var.CREATE_CUSTOM_PRIVATE_SUBNET_ACL == false ? 0 : 1
+  count  = var.CREATE_MAIN_TABLE_ROUTE == false ? 0 : 1
   route_table_id         = var.VPC_MAIN_ROUTE_TABLE_ID != "" ? var.VPC_MAIN_ROUTE_TABLE_ID : aws_vpc.vpc.main_route_table_id
   destination_cidr_block = var.MAIN_ROUTE_TABLE_CIDR_BLOCK
   gateway_id             = var.INTERNET_GATEWAY_ID != "" ? var.INTERNET_GATEWAY_ID : aws_internet_gateway.internet_gateway.id
