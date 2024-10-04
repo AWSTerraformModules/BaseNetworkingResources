@@ -297,18 +297,18 @@ output "SECURITY_GROUP_REVOKE_RULES_ON_DELETE" {
   description = "Instruct Terraform to revoke all of the Security Groups attached ingress and egress rules before deleting the rule itself"
 }
 
+output "CREATE_MAIN_TABLE_ROUTE" {
+  description = "To define if the main table route will be created for the VPC main table"
+  value     = var.CREATE_MAIN_TABLE_ROUTE
+}
+
 output "MAIN_ROUTE_TABLE_CIDR_BLOCK" {
   description = "The CIDR block of the main route table automatically created with the VPC"
   value     = var.MAIN_ROUTE_TABLE_CIDR_BLOCK
 }
 
-output "CREATE_PUBLIC_SUBNET" {
-  description = "To define if a Public Subnet will be created in conjunction with the az_count"
-  value     = var.CREATE_PUBLIC_SUBNET
-}
-
 output "CREATE_PRIVATE_SUBNET" {
-  description = "To define if a Private Subnet will be created in conjunction with the az_count"
+  description = "To define if a Private Subnet will be created"
   value     = var.CREATE_PRIVATE_SUBNET
 }
 

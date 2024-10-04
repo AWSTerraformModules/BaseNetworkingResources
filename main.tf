@@ -95,7 +95,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count                                          = var.AZ_COUNT == 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : var.AZ_COUNT != 0 && var.CREATE_PUBLIC_SUBNET == true ? var.AZ_COUNT : 0
+  count                                          = var.AZ_COUNT == 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PUBLIC_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : 0
   vpc_id                                         = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   cidr_block                                     = length(var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST) > 0 ? element(var.PUBLIC_SUBNETS_CIDR_BLOCK_LIST, count.index) : "10.192.${10 + count.index}.0/24"
   availability_zone                              = data.aws_availability_zones.available_az.names[count.index]
@@ -115,7 +115,7 @@ resource "aws_subnet" "public_subnets" {
 }
 
 resource "aws_subnet" "private_subnets" {
-  count                                          = var.AZ_COUNT == 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : var.AZ_COUNT != 0 && var.CREATE_PRIVATE_SUBNET == true ? var.AZ_COUNT : 0
+  count                                          = var.CREATE_PRIVATE_SUBNET == false ? 0 : var.AZ_COUNT == 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? length(data.aws_availability_zones.available_az.names) : var.AZ_COUNT != 0 && length(var.PRIVATE_SUBNET_ID_LIST) == 0 ? var.AZ_COUNT : 0
   vpc_id                                         = var.VPC_ID != "" ? var.VPC_ID : join("", aws_vpc.vpc.*.id)
   cidr_block                                     = length(var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST) > 0 ? element(var.PRIVATE_SUBNETS_CIDR_BLOCK_LIST, count.index) : "10.192.${20 + count.index}.0/24"
   availability_zone                              = data.aws_availability_zones.available_az.names[count.index]

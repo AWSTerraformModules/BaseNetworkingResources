@@ -115,7 +115,7 @@ module "basenetworkingresources" {
 ```
 aws_route
 ## Version 0.1.3 Features
-- Added possibility of creating or not public and private subnets based on a boolean variable in conjunction with the `AZ_COUNT` variable
+- Added possibility of creating or not private subnets based on a boolean variable
 - Added resource `aws_route` to make it possible creating a route for the main route table created with a VPC
 - Changed deprecated `vpc` property of `aws_eip` to `domain` property
 

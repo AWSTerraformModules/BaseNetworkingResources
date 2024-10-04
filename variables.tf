@@ -93,12 +93,6 @@ variable "PUBLIC_SUBNET_ID_LIST" {
   default     = []
 }
 
-variable "CREATE_PUBLIC_SUBNET" {
-  type        = bool
-  description = "To define if a Public Subnet will be created in conjunction with the az_count"
-  default     = true
-}
-
 variable "PUBLIC_SUBNETS_CIDR_BLOCK_LIST" {
   type        = list(string)
   description = "Explicit Public Subnet CIDR Block List to overrule creation pattern of Public Subnets. If filled out, this attribute needs to have as many items as the amount of AZs in the selected region if var \"AZ_COUNT\" is not set, or with the same amount of var \"AZ_COUNT\" otherwise"
@@ -113,7 +107,7 @@ variable "PRIVATE_SUBNET_ID_LIST" {
 
 variable "CREATE_PRIVATE_SUBNET" {
   type        = bool
-  description = "To define if a Private Subnet will be created in conjunction with the az_count"
+  description = "To define if a Private Subnet will be created"
   default     = true
 }
 
